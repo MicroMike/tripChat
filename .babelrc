@@ -1,5 +1,10 @@
 {
   "presets": ["babel-preset-expo"],
+  "plugins": [
+    ["babel-plugin-module-resolver", {
+      "root": ["./src", "./src/assets/i18n"]
+    }]
+  ],
   "env": {
     "development": {
       "plugins": ["transform-react-jsx-source"]
