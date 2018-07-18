@@ -1,9 +1,15 @@
 export default {
   login: {
-    firstname: "Nom",
-    lastname: "Prénom",
     email: "Email",
-    signup: "S'inscrire"
+    username: "Pseudo",
+    password: "Mot de passe",
+    gender: {
+      label: "Genre",
+      male: "Homme",
+      female: "Femme"
+    },
+    signup: "S'inscrire",
+    signin: "Se connecter"
   },
   error: {
     required: "Ce champ est obligatoire"

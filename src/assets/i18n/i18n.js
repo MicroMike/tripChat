@@ -5,7 +5,8 @@ import fr from 'locales/fr';
 
 I18n.translations = {
   fr,
-  ['fr-FR'] : fr
+  ['fr-FR'] : fr,
+  en: fr
 };
 
 export default I18n;
