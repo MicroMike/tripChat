@@ -4,19 +4,38 @@ import { User } from '../models/user'
 // import sanitizeHtml from 'sanitize-html'
 
 export function getUser(req, res) {
-  User.find().exec((err, user) => {
+  User.find().exec((err, users) => {
     if (err) {
       res.status(500).send(err)
     }
-    res.json({ user })
+    res.json({ users })
   })
 }
 
 export function putUser(req, res) {
-  console.log(req)
-  const newUser = new User(req.body)  
-  newUser.save(err => {  
-      if (err) return res.status(500).send(err)
-      return res.status(200).send(newUser)
+  const newUser = new User(req.body)
+
+  User.findOne({ email: newUser.email }).exec((err, user) => {
+    if (err) {
+      res.status(500).send(err)
+      return
+    }
+
+    if (user) {
+      console.log(newUser)
+      res.status(500).send('***ERROR***')
+      return
+    }
+
+    newUser.save(err => {
+      res.status(200)
+      if (err) {
+        res.statusText = 'error f*** !'
+        res.status(500)
+      }
+      res.send()
+    })
   })
+
+
 }

@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import I18n from 'i18n';
-import { StyleSheet, Text, View, Button } from 'react-native';
+import { StyleSheet, Text, View, Button, Keyboard } from 'react-native';
 import t from 'tcomb-form-native';
 
 const Form = t.form.Form;
@@ -41,11 +41,25 @@ const options = {
 class LoginForm extends Component {
   state = {
     login: true,
+    form: {}
   }
 
   handleSubmit = () => {
-    const value = this.refs.form.getValue();
-    console.log('value: ', value);
+    Keyboard.dismiss()
+    fetch('http://192.168.13.164:3000/api/putUser', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(this.refs.form.getValue()),
+    })
+      .then((response) => {
+        console.log(response)
+      })
+      .catch((e) => {
+        console.log(e)
+      })
   }
 
   switchForm = () => {
@@ -55,9 +69,13 @@ class LoginForm extends Component {
   }
 
   renderForm = () => {
-    return this.state.login
-      ? <Form type={Login} ref="form" options={options} />
-      : <Form type={Signin} ref="form" options={options} />
+    return <Form
+      type={this.state.login ? Login : Signin}
+      ref="form"
+      onChange={form => this.setState({ form })}
+      options={options}
+      value={this.state.form}
+    />
   }
 
   loginLabel = (reverse) => {
@@ -74,7 +92,7 @@ class LoginForm extends Component {
       />
       <Text
         onPress={this.switchForm}
-        style={styles.button}
+        style={styles.switch}
       >
         {this.loginLabel(true)}
       </Text>
@@ -83,9 +101,12 @@ class LoginForm extends Component {
 }
 
 const styles = StyleSheet.create({
-  button: {
+  switch: {
     textAlign: 'center',
-    padding: 20
+    borderTopWidth: 1,
+    borderTopColor: '#000',
+    marginTop: 20,
+    paddingTop: 10,
   },
 });
 
