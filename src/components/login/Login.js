@@ -21,31 +21,36 @@ const Signin = t.struct({
   // terms: t.Boolean
 });
 
-const options = {
-  fields: {
-    email: {
-      label: I18n.t('login.email')
-    },
-    username: {
-      label: I18n.t('login.username')
-    },
-    password: {
-      label: I18n.t('login.password')
-    },
-    gender: {
-      label: I18n.t('login.gender.label')
-    },
-  },
-};
-
 class LoginForm extends Component {
   state = {
     login: true,
-    form: {}
+    form: {},
+    emailAlreadyUsed: false,
+  }
+
+  options = {
+    fields: {
+      email: {
+        label: I18n.t('login.email'),
+        error: this.state.emailAlreadyUsed ? I18n.t('login.emailAlreadyUsed') : ''
+      },
+      username: {
+        label: I18n.t('login.username')
+      },
+      password: {
+        label: I18n.t('login.password')
+      },
+      gender: {
+        label: I18n.t('login.gender.label')
+      },
+    },
   }
 
   handleSubmit = () => {
     Keyboard.dismiss()
+    if (this.refs.form.validate().errors.length > 0) {
+      return
+    }
     fetch('http://192.168.13.164:3000/api/putUser', {
       method: 'POST',
       headers: {
@@ -55,7 +60,13 @@ class LoginForm extends Component {
       body: JSON.stringify(this.refs.form.getValue()),
     })
       .then((response) => {
-        console.log(response)
+        if (!response.ok) {
+          response.json().then(err => {
+            if (err.already) {
+              this.setState({ emailAlreadyUsed: true })
+            }
+          })
+        }
       })
       .catch((e) => {
         console.log(e)
@@ -73,7 +84,7 @@ class LoginForm extends Component {
       type={this.state.login ? Login : Signin}
       ref="form"
       onChange={form => this.setState({ form })}
-      options={options}
+      options={this.options}
       value={this.state.form}
     />
   }
@@ -88,7 +99,7 @@ class LoginForm extends Component {
       {this.renderForm()}
       <Button
         title={this.loginLabel()}
-        onPress={this.handleSubmit}
+        onPress={this.handleSubmit.bind(this)}
       />
       <Text
         onPress={this.switchForm}

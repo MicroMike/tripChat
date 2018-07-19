@@ -17,23 +17,19 @@ export function putUser(req, res) {
 
   User.findOne({ email: newUser.email }).exec((err, user) => {
     if (err) {
-      res.status(500).send(err)
-      return
+      return res.status(500).send(err)
     }
 
     if (user) {
       console.log(newUser)
-      res.status(500).send('***ERROR***')
-      return
+      return res.status(500).send({ already: true })
     }
 
     newUser.save(err => {
-      res.status(200)
       if (err) {
-        res.statusText = 'error f*** !'
-        res.status(500)
+        return res.status(500).send(err)
       }
-      res.send()
+      res.status(200).send()
     })
   })
 
