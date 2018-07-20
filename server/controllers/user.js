@@ -12,8 +12,23 @@ export function getUser(req, res) {
   })
 }
 
+export function login(req, res) {
+  const userConnect = {
+    email: req.params.email.toLowerCase(),
+    password: req.params.password
+  }
+
+  User.findOne(userConnect).exec((err, user) => {
+    if (err) {
+      res.status(500).send(err)
+    }
+    res.json({ user })
+  })
+}
+
 export function putUser(req, res) {
   const newUser = new User(req.body)
+  newUser.email = newUser.email.toLowerCase()
 
   User.findOne({ email: newUser.email }).exec((err, user) => {
     if (err) {
@@ -21,7 +36,6 @@ export function putUser(req, res) {
     }
 
     if (user) {
-      console.log(newUser)
       return res.status(500).send({ already: true })
     }
 
@@ -29,7 +43,7 @@ export function putUser(req, res) {
       if (err) {
         return res.status(500).send(err)
       }
-      res.status(200).send()
+      res.status(200).send('ok')
     })
   })
 

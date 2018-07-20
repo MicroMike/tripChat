@@ -2,6 +2,7 @@ export default {
   login: {
     email: "Email",
     emailAlreadyUsed: "Email déjà existant",
+    emailInvalid: "Email invalide",
     username: "Pseudo",
     password: "Mot de passe",
     gender: {

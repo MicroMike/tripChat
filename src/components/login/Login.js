@@ -3,23 +3,10 @@ import I18n from 'i18n';
 import { StyleSheet, Text, View, Button, Keyboard } from 'react-native';
 import t from 'tcomb-form-native';
 
+import cFetch from 'utils/fetch'
+import loginForm from './form'
+
 const Form = t.form.Form;
-
-const Login = t.struct({
-  email: t.String,
-  password: t.String,
-});
-
-const Signin = t.struct({
-  email: t.String,
-  username: t.String,
-  password: t.String,
-  gender: t.enums({
-    M: I18n.t('login.gender.male'),
-    F: I18n.t('login.gender.female')
-  })
-  // terms: t.Boolean
-});
 
 class LoginForm extends Component {
   state = {
@@ -28,41 +15,33 @@ class LoginForm extends Component {
     emailAlreadyUsed: false,
   }
 
-  options = {
-    fields: {
-      email: {
-        label: I18n.t('login.email'),
-        error: this.state.emailAlreadyUsed ? I18n.t('login.emailAlreadyUsed') : ''
-      },
-      username: {
-        label: I18n.t('login.username')
-      },
-      password: {
-        label: I18n.t('login.password')
-      },
-      gender: {
-        label: I18n.t('login.gender.label')
-      },
-    },
-  }
-
   handleSubmit = () => {
     Keyboard.dismiss()
+    
     if (this.refs.form.validate().errors.length > 0) {
       return
     }
-    fetch('http://192.168.13.164:3000/api/putUser', {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(this.refs.form.getValue()),
-    })
-      .then((response) => {
+
+    if (this.state.login) {
+      const url = `http://192.168.13.164:3000/api/login/${this.state.form.email}/${this.state.form.password}`
+      cFetch(url)
+        .then(response => {
+          response.json().then(json => {
+            if (json.user) {
+              alert('ok')
+              return
+            }
+            alert('nope')
+          })
+        })
+      return
+    }
+
+    cFetch('http://192.168.13.164:3000/api/putUser', JSON.stringify(this.refs.form.getValue()))
+      .then(response => {
         if (!response.ok) {
-          response.json().then(err => {
-            if (err.already) {
+          response.json().then(json => {
+            if (json.already) {
               this.setState({ emailAlreadyUsed: true })
             }
           })
@@ -80,11 +59,13 @@ class LoginForm extends Component {
   }
 
   renderForm = () => {
+    const form = loginForm(this)
+
     return <Form
-      type={this.state.login ? Login : Signin}
+      type={this.state.login ? form.Login : form.Signin}
       ref="form"
       onChange={form => this.setState({ form })}
-      options={this.options}
+      options={form.options}
       value={this.state.form}
     />
   }
