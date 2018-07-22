@@ -1,29 +1,43 @@
 import React, { Component } from 'react'
-import I18n from 'i18n';
-import { StyleSheet, Text, View, Button, Keyboard } from 'react-native';
-import t from 'tcomb-form-native';
+import I18n from 'i18n'
+import { StyleSheet, Text, View, Button, Keyboard } from 'react-native'
+import t from 'tcomb-form-native'
 
 import cFetch from 'utils/fetch'
 import loginForm from './form'
 
-const Form = t.form.Form;
+const Form = t.form.Form
 
 class LoginForm extends Component {
+  static navigationOptions = {
+    title: 'Login'
+  };
+
   state = {
     login: true,
     form: {},
     emailAlreadyUsed: false,
+    userNotFound: false,
+  }
+
+  onFormChange = (form) => {
+    this.setState({
+      form,
+      emailAlreadyUsed: false,
+      userNotFound: false,
+    })
   }
 
   handleSubmit = () => {
-    Keyboard.dismiss()
-    
     if (this.refs.form.validate().errors.length > 0) {
       return
     }
 
+    Keyboard.dismiss()
+    const formValues = this.refs.form.getValue()
+
     if (this.state.login) {
-      const url = `http://192.168.13.164:3000/api/login/${this.state.form.email}/${this.state.form.password}`
+      const url = `http://192.168.0.11:3000/api/login/${formValues.email}/${formValues.password}`
       cFetch(url)
         .then(response => {
           response.json().then(json => {
@@ -31,30 +45,31 @@ class LoginForm extends Component {
               alert('ok')
               return
             }
-            alert('nope')
+            this.setState({ userNotFound: true })
+            this.refs.form.validate()
           })
         })
       return
     }
 
-    cFetch('http://192.168.13.164:3000/api/putUser', JSON.stringify(this.refs.form.getValue()))
+    cFetch('http://192.168.0.11:3000/api/putUser', JSON.stringify(formValues))
       .then(response => {
         if (!response.ok) {
           response.json().then(json => {
             if (json.already) {
               this.setState({ emailAlreadyUsed: true })
+              this.refs.form.validate()
             }
           })
         }
-      })
-      .catch((e) => {
-        console.log(e)
       })
   }
 
   switchForm = () => {
     this.setState({
-      login: !this.state.login
+      login: !this.state.login,
+      emailAlreadyUsed: false,
+      userNotFound: false,
     })
   }
 
@@ -64,7 +79,7 @@ class LoginForm extends Component {
     return <Form
       type={this.state.login ? form.Login : form.Signin}
       ref="form"
-      onChange={form => this.setState({ form })}
+      onChange={this.onFormChange}
       options={form.options}
       value={this.state.form}
     />
@@ -100,6 +115,6 @@ const styles = StyleSheet.create({
     marginTop: 20,
     paddingTop: 10,
   },
-});
+})
 
 export default LoginForm

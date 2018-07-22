@@ -14,23 +14,24 @@ export function getUser(req, res) {
 
 export function login(req, res) {
   const userConnect = {
-    email: req.params.email.toLowerCase(),
+    email: RegExp(`^${req.params.email}$`, 'i'),
     password: req.params.password
   }
 
   User.findOne(userConnect).exec((err, user) => {
     if (err) {
-      res.status(500).send(err)
+      return res.status(500).send(err)
     }
-    res.json({ user })
+    setTimeout(() => {
+      res.json({ user })
+    }, 1000);
   })
 }
 
 export function putUser(req, res) {
   const newUser = new User(req.body)
-  newUser.email = newUser.email.toLowerCase()
 
-  User.findOne({ email: newUser.email }).exec((err, user) => {
+  User.findOne({ email: RegExp(newUser.email, 'i') }).exec((err, user) => {
     if (err) {
       return res.status(500).send(err)
     }

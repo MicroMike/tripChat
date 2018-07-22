@@ -1,27 +1,30 @@
-import React from 'react';
-import { Dimensions, StyleSheet, Text, KeyboardAvoidingView, ScrollView, View, Keyboard } from 'react-native';
+import React from 'react'
+import { Dimensions, StyleSheet, ScrollView, View, Keyboard } from 'react-native'
 import I18n from 'ex-react-native-i18n'
+import { Provider, connect } from 'react-redux';
 
-import Login from 'components/login/Login'
+import store from 'redux/store'
+import Loading from 'components/loading/Loading'
+import Router from 'components/router/Router'
 
-export default class App extends React.Component {
+class App extends React.Component {
   state = {
     keyboardHeight: 0
   }
 
   componentWillMount() {
     I18n.locale = 'fr'
-    I18n.initAsync();
+    I18n.initAsync()
   }
 
   componentDidMount() {
-    this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow.bind(this));
-    this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide.bind(this));
+    this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow.bind(this))
+    this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide.bind(this))
   }
 
   componentWillUnmount() {
-    this.keyboardDidShowListener.remove();
-    this.keyboardDidHideListener.remove();
+    this.keyboardDidShowListener.remove()
+    this.keyboardDidHideListener.remove()
   }
 
   _keyboardDidShow(e) {
@@ -41,16 +44,21 @@ export default class App extends React.Component {
         justifyContent: 'center',
         padding: 20
       }
-    });
+    })
 
     return (
-      // <KeyboardAvoidingView behavior="padding" >
-      <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" >
-        <View style={styles.container}>
-          <Login />
+      <Provider store={store} >
+        <View>
+          <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" >
+            <View style={styles.container}>
+              <Router />
+            </View>
+          </ScrollView>
+          <Loading />
         </View>
-      </ScrollView>
-      // </KeyboardAvoidingView>
-    );
+      </Provider>
+    )
   }
 }
+
+export default App

@@ -27,6 +27,7 @@
     "react-i18next": "^7.8.1",
     "react-native": "~0.55.2",
     "react-native-elements": "^0.19.1",
+    "react-redux": "^5.0.7",
     "tcomb-form-native": "^0.6.15"
   }
 }
