@@ -1,37 +1,42 @@
 import React, { Component } from 'react'
-import { View, Text } from 'react-native'
-import { Permissions, Camera, MediaLibrary, ImagePicker } from 'expo'
-
-// Expo.MediaLibrary.getAlbumsAsync()
+import { View, Text, Button, Image } from 'react-native'
+import { ImagePicker } from 'expo'
+// import loginForm from './form'
 
 export default class Profile extends Component {
 
   state = {
-    hasCameraPermission: null,
-    hasCameraRollPermission: null,
-    type: Camera.Constants.Type.back,
+    image: null
   };
 
-  async componentWillMount() {
-    const { statusCamera } = await Permissions.askAsync(Permissions.CAMERA);
-    const { statusCameraRoll } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
-
-    this.setState({
-      hasCameraPermission: statusCamera === 'granted',
-      hasCameraRollPermission: statusCameraRoll === 'granted'
+  pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      base64: true,
+      quality: 0.2
     });
+
+    const { width, height } = result
+    console.log(width + 'x' + height)
+
+    if (!result.cancelled) {
+      this.setState({ image: result.base64 });
+    }
   }
 
   render = () => {
-    if (this.state.hasCameraRollPermission) {
-      console.log(Expo.MediaLibrary.getAlbumsAsync())
-    }
-
-    ImagePicker.launchImageLibraryAsync(options)
+    const { image } = this.state
 
     return (
       <View>
-        <Text>Haha!</Text>
+        <Button
+          title="Pick an image from camera roll"
+          onPress={this.pickImage}
+        />
+        {image &&
+          <Image source={{ uri: 'data:image/jpeg;base64,' + image }} style={{ width: 300, height: 300 }} />}
       </View>
     )
   }
