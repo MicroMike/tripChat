@@ -1,4 +1,5 @@
 import Login from 'components/login/Login'
+import Profile from 'components/profile/Profile'
 
 const initialState = {
   currentComponent: Login
@@ -10,6 +11,12 @@ const routerReducer = (state = initialState, action) => {
       return {
         ...state,
         currentComponent: Login
+      }
+
+    case 'PROFILE':
+      return {
+        ...state,
+        currentComponent: Profile
       }
 
     default:

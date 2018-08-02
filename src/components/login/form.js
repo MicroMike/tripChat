@@ -1,5 +1,9 @@
+import React from 'react'
 import t from 'tcomb-form-native'
 import I18n from 'i18n'
+import { View, Text, Switch } from 'react-native'
+
+const stylesheet = t.form.Form.stylesheet
 
 const transformer = {
   format: value => value ? value : null,
@@ -12,32 +16,32 @@ export default (component) => {
 
   const emailError = () => {
     const email = state.form.email
-    console.log('start validation', email)
 
     if (!email) {
       return false
     }
 
     if (!/[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}/.test(email)) {
-      console.log('emailInvalid')
       return I18n.t('login.email.emailInvalid')
     }
 
     if (state.emailAlreadyUsed) {
-      console.log('emailAlreadyUsed')
       return I18n.t('login.email.emailAlreadyUsed')
     }
 
     if (state.userNotFound) {
-      console.log('userNotFound')
       return I18n.t('login.email.userNotFound')
     }
 
-    console.log('no error')
     return false
   }
 
   const Email = t.refinement(t.String, () => !emailError())
+  const checkboxStyle = {
+    checkbox: {
+      normal: { position: 'absolute', right: 0 }
+    }
+  }
 
   const form = {
     options: {
@@ -60,37 +64,31 @@ export default (component) => {
         gender: {
           label: I18n.t('login.gender.label')
         },
+        remember: {
+          stylesheet: {
+            ...stylesheet,
+            ...checkboxStyle
+          }
+        }
       },
     },
 
     Login: t.struct({
       email: Email,
       password: t.String,
+      remember: t.Boolean
     }),
 
     Signin: t.struct({
       email: Email,
       username: t.String,
       password: t.String,
-      gender: t.enums({
-        M: I18n.t('login.gender.male'),
-        F: I18n.t('login.gender.female')
-      })
-      // terms: t.Boolean
+      // gender: t.enums({
+      //   M: I18n.t('login.gender.male'),
+      //   F: I18n.t('login.gender.female')
+      // })
     })
   }
-
-  // for (key in form.options.fields) {
-  //   const field = form.options.fields[key]
-  //   form.options.fields[key] = {
-  //     ...field,
-  //     onchange: () => {
-  //       console.log('change')
-  //       state.refs.form.validate()
-  //       field.onchange()
-  //     }
-  //   }
-  // }
 
   return form
 }

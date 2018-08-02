@@ -22,9 +22,7 @@ export function login(req, res) {
     if (err) {
       return res.status(500).send(err)
     }
-    setTimeout(() => {
-      res.json({ user })
-    }, 1000);
+    res.json({ user })
   })
 }
 

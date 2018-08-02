@@ -4,20 +4,31 @@ import { StyleSheet, Text, View, Button, Keyboard } from 'react-native'
 import t from 'tcomb-form-native'
 
 import cFetch from 'utils/fetch'
+import * as storage from 'utils/storage'
 import loginForm from './form'
 
 const Form = t.form.Form
 
 class LoginForm extends Component {
-  static navigationOptions = {
-    title: 'Login'
-  };
 
   state = {
     login: true,
     form: {},
     emailAlreadyUsed: false,
     userNotFound: false,
+    logged: true,
+  }
+
+  componentWillMount = () => {
+    storage.removeData('account')
+    storage.retrieveData('account', (err, value) => {
+      if (value) {
+        this.props.onRouteChange('PROFILE')
+      }
+      else {
+        this.setState({ logged: false })
+      }
+    })
   }
 
   onFormChange = (form) => {
@@ -42,7 +53,11 @@ class LoginForm extends Component {
         .then(response => {
           response.json().then(json => {
             if (json.user) {
-              alert('ok')
+              console.log('ok', formValues.remember)
+              if (formValues.remember) {
+                storage.storeData('account', json.user, () => { console.log(json.user) })
+              }
+              this.props.onRouteChange('PROFILE')
               return
             }
             this.setState({ userNotFound: true })
@@ -61,7 +76,9 @@ class LoginForm extends Component {
               this.refs.form.validate()
             }
           })
+          return
         }
+        this.props.onRouteChange('PROFILE')
       })
   }
 
@@ -90,21 +107,23 @@ class LoginForm extends Component {
     return label ? I18n.t('login.signup') : I18n.t('login.signin')
   }
 
-  render = () => (
-    <View>
-      {this.renderForm()}
-      <Button
-        title={this.loginLabel()}
-        onPress={this.handleSubmit.bind(this)}
-      />
-      <Text
-        onPress={this.switchForm}
-        style={styles.switch}
-      >
-        {this.loginLabel(true)}
-      </Text>
-    </View>
-  )
+  render = () => {
+    return !this.props.logged && (
+      <View>
+        {this.renderForm()}
+        <Button
+          title={this.loginLabel()}
+          onPress={this.handleSubmit.bind(this)}
+        />
+        <Text
+          onPress={this.switchForm}
+          style={styles.switch}
+        >
+          {this.loginLabel(true)}
+        </Text>
+      </View>
+    )
+  }
 }
 
 const styles = StyleSheet.create({

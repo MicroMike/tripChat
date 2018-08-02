@@ -1,7 +1,5 @@
-import { connect } from 'react-redux'
-
-import { displayLoading, hideLoading } from 'components/loading/loadingActions'
 import store from 'redux/store'
+import { displayLoading, hideLoading } from 'components/loading/loadingActions'
 
 export default cFetch = (url, body) => {
   const delay = setTimeout(() => {
@@ -22,8 +20,8 @@ export default cFetch = (url, body) => {
       clearTimeout(delay)
       store.dispatch(hideLoading())
     })
-    .catch((e) => {
-      console.log(e)
+    .catch((error) => {
+      console.log(error)
     })
 
   return promise
