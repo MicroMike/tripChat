@@ -2,8 +2,6 @@ import React, { Component } from 'react'
 import t from 'tcomb-form-native'
 import I18n from 'i18n'
 
-import radio from './radio'
-
 export default LoginForm = (component) => {
 
   const Form = t.form.Form
@@ -24,7 +22,7 @@ export default LoginForm = (component) => {
       return false
     }
 
-    if (!/[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}/.test(email)) {
+    if (!/[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}/.test(email.trim())) {
       return I18n.t('login.email.emailInvalid')
     }
 
@@ -51,15 +49,10 @@ export default LoginForm = (component) => {
     email: Email,
     username: t.String,
     password: t.String,
-    gender: t.String,
-    // gender: t.enums({
-    //   M: I18n.t('login.gender.male'),
-    //   F: I18n.t('login.gender.female')
-    // })
   })
 
   const transformer = {
-    format: value => value ? value : null,
+    format: value => value ? value.trim() : null,
     parse: value => value ? value.trim() : null
   }
 
@@ -93,14 +86,6 @@ export default LoginForm = (component) => {
         label: I18n.t('login.password'),
         password: true,
         secureTextEntry: true
-      },
-      gender: {
-        label: I18n.t('login.gender.label'),
-        stylesheet,
-        template: radio({
-          M: I18n.t('login.gender.male'),
-          F: I18n.t('login.gender.female'),
-        })
       },
       remember: {
         stylesheet

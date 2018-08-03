@@ -8,15 +8,21 @@ export default {
     },
     username: "Pseudo",
     password: "Mot de passe",
+    signup: "S'inscrire",
+    signin: "Se connecter"
+  },
+  profile: {
+    picture: "Choisi ton avatar",
     gender: {
       label: "Genre",
       male: "Homme",
       female: "Femme"
-    },
-    signup: "S'inscrire",
-    signin: "Se connecter"
+    }
   },
   error: {
     required: "Ce champ est obligatoire"
+  },
+  commons: {
+    continue: "Continuer"
   }
 }

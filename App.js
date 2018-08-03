@@ -39,8 +39,8 @@ class App extends React.Component {
     const styles = StyleSheet.create({
       container: {
         flex: 1,
-        minHeight: Dimensions.get('window').height - this.state.keyboardHeight,
         backgroundColor: '#fff',
+        minHeight: Dimensions.get('window').height - this.state.keyboardHeight,
         justifyContent: 'center',
         padding: 20
       }
@@ -48,9 +48,11 @@ class App extends React.Component {
 
     return (
       <Provider store={store} >
-        <View>
-          <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" >
-            <View style={styles.container}>
+        <View style={{
+          height: Dimensions.get('window').height - this.state.keyboardHeight
+        }}>
+          <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="always">
+            <View style={styles.container} >
               <Router />
             </View>
           </ScrollView>

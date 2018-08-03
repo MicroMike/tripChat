@@ -1,46 +1,47 @@
-var React = require("react");
-var { View, Text, Switch } = require("react-native");
+var React = require("react")
+var { View, Text, Switch } = require("react-native")
 
 function radio(values) {
 
   return (locals) => {
     if (locals.hidden) {
-      return null;
+      return null
     }
 
-    var stylesheet = locals.stylesheet;
-    var formGroupStyle = stylesheet.formGroup.normal;
-    var controlLabelStyle = stylesheet.controlLabel.normal;
-    var checkboxStyle = stylesheet.checkbox.normal;
-    var helpBlockStyle = stylesheet.helpBlock.normal;
-    var errorBlockStyle = stylesheet.errorBlock;
+    var stylesheet = locals.stylesheet
+    var formGroupStyle = stylesheet.formGroup.normal
+    var controlLabelStyle = stylesheet.controlLabel.normal
+    var checkboxStyle = stylesheet.checkbox.normal
+    var helpBlockStyle = stylesheet.helpBlock.normal
+    var errorBlockStyle = stylesheet.errorBlock
 
     if (locals.hasError) {
-      formGroupStyle = stylesheet.formGroup.error;
-      controlLabelStyle = stylesheet.controlLabel.error;
-      checkboxStyle = stylesheet.checkbox.error;
-      helpBlockStyle = stylesheet.helpBlock.error;
+      formGroupStyle = stylesheet.formGroup.error
+      controlLabelStyle = stylesheet.controlLabel.error
+      checkboxStyle = stylesheet.checkbox.error
+      helpBlockStyle = stylesheet.helpBlock.error
     }
 
     var label = locals.label ? (
       <Text style={controlLabelStyle}>{locals.label}</Text>
-    ) : null;
+    ) : null
     var help = locals.help ? (
       <Text style={helpBlockStyle}>{locals.help}</Text>
-    ) : null;
+    ) : null
     var error =
       locals.hasError && locals.error ? (
         <Text accessibilityLiveRegion="polite" style={errorBlockStyle}>
           {locals.error}
         </Text>
-      ) : null;
+      ) : null
 
     return (
       <View style={formGroupStyle}>
         {label}
         <View style={{
           flexDirection: 'row',
-          flexWrap: 'wrap'
+          flexWrap: 'wrap',
+          marginBottom: 10
         }}>
           {Object.entries(values).map(arr => {
             const key = arr[0]
@@ -71,8 +72,8 @@ function radio(values) {
           {error}
         </View>
       </View>
-    );
+    )
   }
 }
 
-module.exports = radio;
+module.exports = radio

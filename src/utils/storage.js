@@ -20,7 +20,24 @@ export const removeData = async (key, callback) => {
 
 export const retrieveData = async (key, callback) => {
   try {
-    await AsyncStorage.getItem(key, callback);
+    await AsyncStorage.getItem(key, (err, data) => {
+      if (err) {
+        return console.log(err)
+      }
+      callback(JSON.parse(data))
+    });
+  }
+  catch (error) {
+    console.log(error)
+  }
+}
+
+export const updateData = async (key, value, callback) => {
+  try {
+    retrieveData(key, data => {
+      console.log(Object.assign(data, value))
+      storeData(key, Object.assign(data, value), callback);
+    })
   }
   catch (error) {
     console.log(error)

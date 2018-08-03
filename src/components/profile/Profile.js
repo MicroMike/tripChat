@@ -1,42 +1,59 @@
 import React, { Component } from 'react'
-import { View, Text, Button, Image } from 'react-native'
-import { ImagePicker } from 'expo'
-// import loginForm from './form'
+import { View, Button, Keyboard } from 'react-native'
+import I18n from 'i18n'
+
+import ProfileForm from './ProfileForm'
+import * as storage from 'utils/storage'
+import cFetch from 'utils/fetch'
 
 export default class Profile extends Component {
 
   state = {
-    image: null
+    form: {
+      gender: 'M',
+    },
   };
 
-  pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [1, 1],
-      base64: true,
-      quality: 0.2
-    });
+  handleSubmit = () => {
+    this.props.onRouteChange('PROFILE')
 
-    const { width, height } = result
-    console.log(width + 'x' + height)
-
-    if (!result.cancelled) {
-      this.setState({ image: result.base64 });
+    if (this.refs.form.validate().errors.length > 0) {
+      return
     }
+
+    Keyboard.dismiss()
+    const formValues = this.refs.form.getValue()
+
+    storage.retrieveData('user', user => {
+      const postValues = {
+        userId: user._id,
+        ...formValues,
+      }
+      const url = `http://192.168.13.164:3000/api/putUserInfo/`
+      cFetch(url, postValues)
+        .then(response => {
+          response.json().then(json => {
+            if (json.done) {
+              storage.updateData('user', formValues, () => {
+                this.props.onRouteChange('TRAVEL')
+              })
+            }
+          })
+        })
+    })
   }
 
   render = () => {
-    const { image } = this.state
-
+    const { avatar, gender } = this.state.form
     return (
       <View>
-        <Button
-          title="Pick an image from camera roll"
-          onPress={this.pickImage}
-        />
-        {image &&
-          <Image source={{ uri: 'data:image/jpeg;base64,' + image }} style={{ width: 300, height: 300 }} />}
+        {ProfileForm(this)}
+        {avatar && gender &&
+          <Button
+            title={I18n.t('commons.continue')}
+            onPress={this.handleSubmit.bind(this)}
+          />
+        }
       </View>
     )
   }

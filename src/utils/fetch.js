@@ -12,7 +12,7 @@ export default cFetch = (url, body) => {
       Accept: 'application/json',
       'Content-Type': 'application/json',
     },
-    body,
+    body: JSON.stringify(body),
   })
 
   promise

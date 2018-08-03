@@ -42,7 +42,7 @@ export function putUser(req, res) {
       if (err) {
         return res.status(500).send(err)
       }
-      res.status(200).send('ok')
+      res.status(200).send(newUser)
     })
   })
 
