@@ -18,7 +18,7 @@ function radio(values) {
     if (locals.hasError) {
       formGroupStyle = stylesheet.formGroup.error
       controlLabelStyle = stylesheet.controlLabel.error
-      checkboxStyle = stylesheet.checkbox.error
+      // checkboxStyle = stylesheet.checkbox.error
       helpBlockStyle = stylesheet.helpBlock.error
     }
 
@@ -48,7 +48,7 @@ function radio(values) {
             const radioLabel = arr[1]
             return (
               <View key={key} style={{
-                width: '50%'
+                width: '50%', marginTop: 5, marginBottom: 5
               }}>
                 <Text style={helpBlockStyle}>{radioLabel}</Text>
                 <Switch

@@ -35,7 +35,6 @@ export const retrieveData = async (key, callback) => {
 export const updateData = async (key, value, callback) => {
   try {
     retrieveData(key, data => {
-      console.log(Object.assign(data, value))
       storeData(key, Object.assign(data, value), callback);
     })
   }

@@ -18,13 +18,25 @@ class Login extends Component {
   }
 
   componentWillMount = () => {
-    storage.removeData('user')
-    storage.retrieveData('user', user => {
-      if (user) {
-        this.props.onRouteChange('PROFILE')
+    // storage.removeData('remember')
+    storage.retrieveData('remember', remember => {
+      console.log('remember ' + remember)
+      if (remember) {
+        this.redirect()
       }
       else {
         this.setState({ logged: false })
+      }
+    })
+  }
+
+  redirect = () => {
+    storage.retrieveData('user', user => {
+      if (user && !user.gender) {
+        this.props.onRouteChange('PROFILE')
+      }
+      else if (user) {
+        this.props.onRouteChange('TRAVEL')
       }
     })
   }
@@ -45,13 +57,14 @@ class Login extends Component {
             if (json.user) {
               console.log('ok', formValues.remember)
               if (formValues.remember) {
-                storage.storeData('user', json.user, () => { console.log(json.user) })
+                storage.storeData('remember', true, () => { })
               }
-              // this.props.onRouteChange('PROFILE')
-              return
+              storage.storeData('user', json.user, () => { this.redirect() })
             }
-            this.setState({ userNotFound: true })
-            this.refs.form.validate()
+            else {
+              this.setState({ userNotFound: true })
+              this.refs.form.validate()
+            }
           })
         })
       return
@@ -65,9 +78,11 @@ class Login extends Component {
             this.refs.form.validate()
             return
           }
-          storage.storeData('user', json, () => {
-            this.props.onRouteChange('PROFILE')
-          })
+          if (json.user) {
+            storage.storeData('user', json.user, () => {
+              this.props.onRouteChange('PROFILE')
+            })
+          }
         })
       })
   }

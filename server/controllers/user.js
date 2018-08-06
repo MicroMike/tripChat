@@ -1,4 +1,5 @@
 import { User } from '../models/user'
+import { UserInfo } from '../models/userInfo'
 // import cuid from 'cuid'
 // import slug from 'limax'
 // import sanitizeHtml from 'sanitize-html'
@@ -22,7 +23,19 @@ export function login(req, res) {
     if (err) {
       return res.status(500).send(err)
     }
-    res.json({ user })
+
+    if (user) {
+      UserInfo.findOne({ userId: user._id }).exec((err, userInfo) => {
+        if (userInfo) {
+          user = {
+            ...user._doc,
+            ...userInfo._doc
+          }
+        }
+
+        res.json({ user })
+      })
+    }
   })
 }
 
@@ -42,9 +55,8 @@ export function putUser(req, res) {
       if (err) {
         return res.status(500).send(err)
       }
-      res.status(200).send(newUser)
+
+      res.status(200).send({ user: newUser })
     })
   })
-
-
 }

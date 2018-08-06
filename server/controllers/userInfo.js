@@ -1,9 +1,10 @@
 import { UserInfo } from '../models/userInfo'
 
 export function putUserInfo(req, res) {
-  const newUserInfo = req.body
+  const newUserInfo = new UserInfo(req.body)
+  const {_id, ...search} = newUserInfo._doc
 
-  UserInfo.findOneAndUpdate({ userId: newUserInfo.userId }, newUserInfo, { upsert: true }, (err, userInfo) => {
+  UserInfo.findOneAndUpdate({ userId: search.userId }, search, { upsert: true }, (err, userInfo) => {
     if (err) {
       return res.status(500).send(err)
     }

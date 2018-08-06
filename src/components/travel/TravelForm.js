@@ -3,18 +3,17 @@ import t from 'tcomb-form-native'
 import I18n from 'i18n'
 
 import radio from 'utils/form/radio'
-import image from 'utils/form/image'
 
-export default ProfileForm = (component) => {
+export default TravelForm = (component) => {
 
   const Form = t.form.Form
 
   const state = component.state
 
-  const userInfo = t.struct({
-    avatar: t.String,
-    gender: t.String,
-    birthDate: t.Date
+  const travel = t.struct({
+    type: t.String,
+    travelId: t.String,
+    dateStart: t.maybe(t.Date)
   })
 
   const onFormChange = (form) => {
@@ -37,20 +36,20 @@ export default ProfileForm = (component) => {
 
   const options = {
     fields: {
-      gender: {
-        label: ' ',//I18n.t('profile.gender.label'),
+      type: {
+        label: I18n.t('travel.type.label'),
         stylesheet,
         template: radio({
-          M: I18n.t('profile.gender.male'),
-          F: I18n.t('profile.gender.female'),
+          F: I18n.t('travel.type.flight'),
+          T: I18n.t('travel.type.train'),
+          B: I18n.t('travel.type.boat'),
         })
       },
-      avatar: {
-        label: I18n.t('profile.picture'),
-        template: image
+      travelId: {
+        label: I18n.t('travel.id')
       },
-      birthDate: {
-        label: I18n.t('profile.birthDate'),
+      dateStart: {
+        label: I18n.t('travel.date'),
         mode: 'date',
         config: {
           format: date => new Date(date).toLocaleDateString('fr')
@@ -62,7 +61,7 @@ export default ProfileForm = (component) => {
 
   return (
     <Form
-      type={userInfo}
+      type={travel}
       ref="form"
       onChange={onFormChange}
       options={options}

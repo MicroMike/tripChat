@@ -2,20 +2,14 @@ import React, { Component } from 'react'
 import { View, Button, Keyboard } from 'react-native'
 import I18n from 'i18n'
 
-import ProfileForm from './ProfileForm'
+import TravelForm from './TravelForm'
 import * as storage from 'utils/storage'
 import cFetch from 'utils/fetch'
 
-export default class Profile extends Component {
+export default class Travel extends Component {
 
   state = {
     form: {},
-  }
-
-  componentWillMount = () => {
-    storage.retrieveData('user', user => {
-      this.setState({ form: { ...user } })
-    })
   }
 
   handleSubmit = () => {
@@ -29,16 +23,17 @@ export default class Profile extends Component {
     storage.retrieveData('user', user => {
       const postValues = {
         ...formValues,
-        userId: user.userId || user._id,
+        userId: user.userId,
       }
-      const url = `http://192.168.13.164:3000/api/putUserInfo/`
+      const url = `http://192.168.13.164:3000/api/putTravel/`
       cFetch(url, postValues)
         .then(response => {
           response.json().then(json => {
+            if (json.already) {
+              console.log('already')
+            }
             if (json.done) {
-              storage.updateData('user', formValues, () => {
-                this.props.onRouteChange('TRAVEL')
-              })
+              console.log('done')
             }
           })
         })
@@ -46,10 +41,9 @@ export default class Profile extends Component {
   }
 
   render = () => {
-    const { avatar, gender } = this.state.form
     return (
       <View>
-        {ProfileForm(this)}
+        {TravelForm(this)}
         <Button
           title={I18n.t('commons.continue')}
           onPress={this.handleSubmit.bind(this)}
